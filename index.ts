@@ -113,8 +113,10 @@ app.patch(`/songs/:id`, async (req, res) => {
         const song = await prisma.song.update({
             where: { id }, data: { votes: votes },
         })
+
+        const songs = await prisma.song.findMany()
         if (song) {
-            res.send(song)
+            res.send(songs)
         }
         else {
             res.status(404).send({ error: `Song not found` })
