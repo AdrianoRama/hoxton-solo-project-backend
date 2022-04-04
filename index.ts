@@ -72,12 +72,12 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/songs", async (req, res) => {
-    const { id, clientName, songTitle, artist, songUrl } = req.body;
+    const { userId, clientName, songTitle, artist, songUrl } = req.body;
 
     try {
         const song = await prisma.song.create({
             data: {
-                id: id,
+                userId: userId,
                 clientName: clientName,
                 songTitle: songTitle,
                 artist: artist,
@@ -85,7 +85,7 @@ app.post("/songs", async (req, res) => {
                 votes: 0
             }
         });
-        res.send({ song });
+        res.send(song);
     } catch (err) {
         // @ts-ignore
         res.status(400).send({ error: err.message });
