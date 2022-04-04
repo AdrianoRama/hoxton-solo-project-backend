@@ -8,7 +8,19 @@ const users: Prisma.UserCreateInput[] = [
     },
     {
         uniqueCode: 'alban123'
-    }
+    },
+    {
+        uniqueCode: 'guido123'
+    },
+    {
+        uniqueCode: 'bora123'
+    },
+    {
+        uniqueCode: 'luiza123'
+    },
+    {
+        uniqueCode: 'arvalda123'
+    },
 ];
 
 

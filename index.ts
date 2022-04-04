@@ -30,6 +30,13 @@ app.get("/songs", async (req, res) => {
     res.send(songs);
 });
 
+app.get("/songs/:id", async (req, res) => {
+    const id = Number(req.params.id)
+    const song = await prisma.song.findUnique({ where: { id: id } });
+
+    res.send(song);
+});
+
 function createToken(id: number) {
     //@ts-ignore
     return jwt.sign({ id: id }, process.env.MY_SECRET);
@@ -97,6 +104,26 @@ app.get("/validate", async (req, res) => {
         res.status(400).send({ error: "Invalid Token" });
     }
 });
+
+app.patch(`/songs/:id`, async (req, res) => {
+    const id = Number(req.params.id)
+    const votes = req.body.votes
+
+    try {
+        const song = await prisma.song.update({
+            where: { id }, data: { votes: votes },
+        })
+        if (song) {
+            res.send(song)
+        }
+        else {
+            res.status(404).send({ error: `Song not found` })
+        }
+    }
+    catch (error) {
+        res.status(400).send({ error: error })
+    }
+})
 
 
 app.listen(PORT, () => {
