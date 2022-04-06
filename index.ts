@@ -12,14 +12,14 @@ const prisma = new PrismaClient({ log: ["error", "warn", "query", "warn"] });
 const PORT = 4000;
 
 app.get("/users", async (req, res) => {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({ include: { votedSongs: true } });
 
     res.send(users);
 });
 
 app.get("/users/:id", async (req, res) => {
     let id = Number(req.params.id)
-    const user = await prisma.user.findUnique({ where: { id: id } });
+    const user = await prisma.user.findUnique({ where: { id: id }, include: { votedSongs: true } });
 
     res.send(user);
 });
@@ -36,6 +36,12 @@ app.get("/songs/:id", async (req, res) => {
 
     res.send(song);
 });
+
+app.get("/votedsongs", async (req, res) => {
+    const votedSongs = await prisma.votedSong.findMany()
+
+    res.send(votedSongs)
+})
 
 function createToken(id: number) {
     //@ts-ignore
@@ -86,6 +92,26 @@ app.post("/songs", async (req, res) => {
             }
         });
         res.send(song);
+    } catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message });
+    }
+});
+
+app.post("/votedsongs", async (req, res) => {
+    const { id, songId } = req.body;
+    try {
+        const user = await prisma.user.update({
+            where: { id: id },
+            data: {
+                votedSongs: {
+                    create: {
+                        songId: songId
+                    }
+                }
+            }, include: { votedSongs: true }
+        });
+        res.send(user);
     } catch (err) {
         // @ts-ignore
         res.status(400).send({ error: err.message });

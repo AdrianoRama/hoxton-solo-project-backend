@@ -11,8 +11,9 @@ datasource db {
 }
 
 model User {
-  id         Int    @id @default(autoincrement())
-  uniqueCode String @unique
+  id         Int         @id @default(autoincrement())
+  uniqueCode String      @unique
+  votedSongs VotedSong[]
 }
 
 model Song {
@@ -23,4 +24,10 @@ model Song {
   artist     String
   songUrl    String
   votes      Int
+}
+
+model VotedSong {
+  id     Int    @id @default(autoincrement())
+  songId Int
+  users  User[]
 }
