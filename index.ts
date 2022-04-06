@@ -98,6 +98,18 @@ app.post("/songs", async (req, res) => {
     }
 });
 
+app.delete(`/songs/:id`, async (req, res) => {
+    const id = Number(req.params.id)
+
+    try {
+        const song = await prisma.song.delete({ where: { id: id } })
+        res.send(song)
+    }
+    catch (error) {
+        res.status(400).send({ error: error })
+    }
+})
+
 app.post("/votedsongs", async (req, res) => {
     const { id, songId } = req.body;
     try {
