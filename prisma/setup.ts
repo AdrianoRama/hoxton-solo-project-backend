@@ -4,7 +4,7 @@ const prisma = new PrismaClient({ log: ["query", "info", "warn", "error"] });
 
 const users: Prisma.UserCreateInput[] = [
     {
-        uniqueCode: 'adriano123'
+        uniqueCode: 'adriano123',
     },
     {
         uniqueCode: 'alban123'
