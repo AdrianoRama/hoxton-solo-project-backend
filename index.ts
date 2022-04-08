@@ -111,7 +111,7 @@ app.delete(`/songs/:id`, async (req, res) => {
 })
 
 app.post("/votedsongs", async (req, res) => {
-    const { id, songId } = req.body;
+    const { id, songId, votes } = req.body;
     try {
         const user = await prisma.user.update({
             where: { id: id },
@@ -123,7 +123,16 @@ app.post("/votedsongs", async (req, res) => {
                 }
             }, include: { votedSongs: true }
         });
-        res.send(user);
+
+        const song = await prisma.song.update({
+            where: { id: songId },
+            data: {
+                votes: votes + 1
+            }
+        })
+        const songs = await prisma.song.findMany()
+
+        res.send({ songs, user })
     } catch (err) {
         // @ts-ignore
         res.status(400).send({ error: err.message });
@@ -142,28 +151,6 @@ app.get("/validate", async (req, res) => {
         res.status(400).send({ error: "Invalid Token" });
     }
 });
-
-app.patch(`/songs/:id`, async (req, res) => {
-    const id = Number(req.params.id)
-    const votes = req.body.votes
-
-    try {
-        const song = await prisma.song.update({
-            where: { id }, data: { votes: votes },
-        })
-
-        const songs = await prisma.song.findMany()
-        if (song) {
-            res.send(songs)
-        }
-        else {
-            res.status(404).send({ error: `Song not found` })
-        }
-    }
-    catch (error) {
-        res.status(400).send({ error: error })
-    }
-})
 
 
 app.listen(PORT, () => {
